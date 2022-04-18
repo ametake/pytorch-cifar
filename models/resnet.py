@@ -23,6 +23,20 @@ class BasicBlock(nn.Module):
                                stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
 
+        # Change: change the Conv2d layer to functional Conv2d for future modification.
+        self.W1 = nn.Parameter(torch.zeros(size=(planes, in_planes, 3, 3)))
+        self.W2 = nn.Parameter(torch.zeros(size=(planes, planes, 3, 3)))
+        nn.init.kaiming_normal_(self.W1)
+        nn.init.kaiming_normal_(self.W2)
+
+        self.W_skip = nn.Parameter(torch.zeros(size=(self.expansion * planes, in_planes, 1, 1)))
+        nn.init.kaiming_normal_(self.W_skip)
+
+        self.stride = stride
+        self.planes = planes
+
+        # Change ends here.
+
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != self.expansion*planes:
             self.shortcut = nn.Sequential(
@@ -32,8 +46,9 @@ class BasicBlock(nn.Module):
             )
 
     def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(out))
+        # Change: change the relu and batch norm layers from Conv2d to functional Conv2d for future modification.
+        out = F.relu(self.bn1(F.conv2d(x, self.W1, stride=self.stride, padding=1)))
+        out = self.bn2(F.conv2d(out, self.W2, stride=1, padding=1))
         out += self.shortcut(x)
         out = F.relu(out)
         return out
@@ -75,8 +90,14 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.in_planes = 64
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3,
-                               stride=1, padding=1, bias=False)
+        # self.conv1 = nn.Conv2d(3, 64, kernel_size=3,
+        #                        stride=1, padding=1, bias=False)
+
+        # Change: change the Conv2d layer to functional Conv2d for future modification.
+        self.W1 = nn.Parameter(torch.zeros(size=(64, 3, 3, 3)))
+        nn.init.kaiming_normal_(self.W1)
+        # Change ends here.
+
         self.bn1 = nn.BatchNorm2d(64)
         self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
@@ -93,7 +114,9 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
+        # Change: from Conv2d to functional Conv2d.
+        # out = F.relu(self.bn1(self.conv1(x)))
+        out = F.relu(self.bn1(F.conv2d(x, self.W1, stride=1, padding=1)))
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
