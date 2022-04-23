@@ -2,7 +2,7 @@
 #SBATCH -c 2
 #SBATCH --mem=8192 # Memory pool for all cores (see also --mem-per-cpu)
 #SBATCH -p gpu
-#SBATCH -G 1
+#SBATCH -G 2
 #SBATCH -t 1-00:00:00
 #SBATCH -o 696_1024_512_with_cluster/slurm%j.out
 
