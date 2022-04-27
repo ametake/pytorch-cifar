@@ -13,3 +13,4 @@ python -u main.py
 
 # In case it doesn't work
 # srun python main.py
+# srun -c 2 -G 2 -p gpu --mem 8192 --pty bash
