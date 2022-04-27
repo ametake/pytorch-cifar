@@ -154,6 +154,7 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
     def __init__(self, block, num_blocks, num_classes=10, m=1):
+        print("m=", m)
         super(ResNet, self).__init__()
         #self.conv1 = nn.Conv2d(3, 64, kernel_size=3,
                                #stride=1, padding=1, bias=False)
@@ -192,22 +193,27 @@ class ResNet(nn.Module):
 
 
 def ResNet18():
+    print("ResNet18")
     return ResNet(BasicBlock, [2, 2, 2, 2], m=1)
 
 
 def ResNet34():
+    print("ResNet34")
     return ResNet(BasicBlock, [3, 4, 6, 3], m=1)
 
 
 def ResNet50():
+    print("ResNet50")
     return ResNet(Bottleneck, [3, 4, 6, 3], m=4)
 
 
 def ResNet101():
+    print("ResNet101")
     return ResNet(Bottleneck, [3, 4, 23, 3])
 
 
 def ResNet152():
+    print("ResNet152")
     return ResNet(Bottleneck, [3, 8, 36, 3])
 
 
