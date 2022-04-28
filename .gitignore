@@ -1,9 +1,3 @@
+.idea
+.outputs
 
-.idea/deployment.xml
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/pytorch-cifar.iml
-.idea/remote-mappings.xml
-.idea/vcs.xml
