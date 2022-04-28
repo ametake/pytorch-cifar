@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --job-name=cifar100-resnet18-m4
+#SBATCH --job-name=cifar100-resnet50-m1-epoch50
 #SBATCH --partition=gpu-long
 #SBATCH --gres=gpu:8
 #SBATCH --mem=20GB
 #SBATCH --ntasks-per-node=4
 #SBATCH -d singleton
 #SBATCH --open-mode truncate
-#SBATCH -o outputs/cifar100-resnet18-m4.txt
-#SBATCH -t 58:00:00
+#SBATCH -o outputs/cifar100-resnet50-m1-epoch50.txt
+#SBATCH -t 180:00:00
 module load cuda/11.3.1
 python -u main.py
 

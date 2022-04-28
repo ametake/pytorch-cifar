@@ -43,15 +43,23 @@ transform_test = transforms.Compose([
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
+train_batch_size = 32
+test_batch_size = 50
+this_epoch = 50
+
+print("This time the total epoch is: ", this_epoch)
+
 trainset = torchvision.datasets.CIFAR100(
     root='./data', train=True, download=True, transform=transform_train)
 trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=64, shuffle=True, num_workers=2) # original batch_size=64, for ResNet50 batch_size=16
+    trainset, batch_size=train_batch_size, shuffle=True, num_workers=2) # original batch_size=64, for ResNet50 batch_size=16, and sometimes 32
+print("Train batch_size: ", train_batch_size)
 
 testset = torchvision.datasets.CIFAR100(
     root='./data', train=False, download=True, transform=transform_test)
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=100, shuffle=False, num_workers=2) # original batch_size=100, for ResNet50 batch_size=25
+    testset, batch_size=test_batch_size, shuffle=False, num_workers=2) # original batch_size=100, for ResNet50 batch_size=25, and sometimes 50
+print("Test batch_size: ", test_batch_size)
 
 classes = ('plane', 'car', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck')
@@ -59,7 +67,7 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer',
 # Model
 print('==> Building model..')
 # net = VGG('VGG19')
-net = ResNet18()
+net = ResNet50()
 
 # net = PreActResNet18()
 # net = GoogLeNet()
@@ -86,7 +94,7 @@ if args.resume:
     # Load checkpoint.
     print('==> Resuming from checkpoint..')
     assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-    checkpoint = torch.load('./checkpoint/ckpt-cifar100-resnet18-m4.pth')
+    checkpoint = torch.load('./checkpoint/ckpt-cifar100-resnet50-m1-epoch50.pth')
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
     start_epoch = checkpoint['epoch']
@@ -152,11 +160,11 @@ def test(epoch):
         }
         if not os.path.isdir('checkpoint'):
             os.mkdir('checkpoint')
-        torch.save(state, './checkpoint/ckpt-cifar100-resnet18-m4.pth')
+        torch.save(state, './checkpoint/ckpt-cifar100-resnet50-m1-epoch50.pth')
         best_acc = acc
 
 
-for epoch in range(start_epoch, start_epoch+250): # originally epoch=250, for ResNet50 epoch=1000
+for epoch in range(start_epoch, start_epoch+this_epoch): # originally epoch=250, for ResNet50 epoch=50
     train(epoch)
     test(epoch)
     scheduler.step()
